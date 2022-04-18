@@ -24,12 +24,13 @@ const NextButton = memo(function NextButton(props) {
     const {
         setTabFunc,
         subjectIndex,
-        setSubjectName
+        setSubjectName,
+        subjectName,
     } = props
 
     function handleOnClick(){
         setTabFunc(subjectIndex)
-        setSubjectName(setSubjectName)
+        setSubjectName(subjectName)
     }
 
     return(
@@ -360,6 +361,7 @@ function Questions({ subjectIndex, question, answers, setAnswers,
                 setTabFunc={setTabFunc}
                 subjectIndex={subjectIndex}
                 setSubjectName={setSubjectName}
+                subjectName={subjectName}
             />
         </Box>
     )
