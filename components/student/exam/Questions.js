@@ -23,8 +23,14 @@ import CheckboxChoices from "../../question_layout/CheckboxChoices";
 const NextButton = memo(function NextButton(props) {
     const {
         setTabFunc,
-        subjectIndex
+        subjectIndex,
+        setSubjectName
     } = props
+
+    function handleOnClick(){
+        setTabFunc(subjectIndex)
+        setSubjectName(setSubjectName)
+    }
 
     return(
         <>
@@ -38,7 +44,7 @@ const NextButton = memo(function NextButton(props) {
                         component="a"
                         href="#t"
                         lsx={{ px:5 }}
-                        onClick={() => setTabFunc(subjectIndex)}>
+                        onClick={handleOnClick}>
                     Next
                 </Button>
             </Box>
@@ -47,7 +53,7 @@ const NextButton = memo(function NextButton(props) {
 });
 
 function Questions({ subjectIndex, question, answers, setAnswers,
-                                      examSubject, setExamSubject, subjectId, subjectName, setTabFunc }) {
+                                      examSubject, setExamSubject, subjectId, subjectName, setTabFunc, setSubjectName }) {
 
     const onClickMultipleChoice = useCallback((questionIndex, choiceIndex, qId, cId) => {
         let a = answers
@@ -353,6 +359,7 @@ function Questions({ subjectIndex, question, answers, setAnswers,
             <NextButton
                 setTabFunc={setTabFunc}
                 subjectIndex={subjectIndex}
+                setSubjectName={setSubjectName}
             />
         </Box>
     )
