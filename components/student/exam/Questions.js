@@ -30,7 +30,10 @@ const NextButton = memo(function NextButton(props) {
 
     function handleOnClick(){
         setTabFunc(subjectIndex)
-        setSubjectName(subjectName)
+        if(subjectName !== '')
+            setSubjectName(subjectName)
+        else
+            setSubjectName('Submit')
     }
 
     return(
@@ -361,7 +364,7 @@ function Questions({ subjectIndex, question, answers, setAnswers,
                 setTabFunc={setTabFunc}
                 subjectIndex={subjectIndex}
                 setSubjectName={setSubjectName}
-                subjectName={subjectName}
+                subjectName={examSubject[subjectIndex+1]?.name ? examSubject[subjectIndex+1]?.name: ''}
             />
         </Box>
     )
