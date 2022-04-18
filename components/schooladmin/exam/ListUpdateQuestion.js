@@ -308,7 +308,7 @@ const DefaultDisplay = memo(function DefaultDisplay(props) {
             return (
                 <FormGroup>
                     <QuestionText
-                        question={rawHTML((q.text))}
+                        question={q.text}
                         no={qI+1}
                         image={q.imagePreview ? q.imagePreview : q.image}
                     />
