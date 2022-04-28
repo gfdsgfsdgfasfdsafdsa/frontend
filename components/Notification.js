@@ -25,7 +25,9 @@ import AxiosInstance from "../utils/axiosInstance";
 const Notification = ({ isStudent }) => {
     const notifQuery = isStudent ? 'student/notification/' : 'school/notification/'
 
-    const { data: notif, mutate: notifMutate } = useSWR(notifQuery);
+    const { data: notif, mutate: notifMutate } = useSWR(notifQuery, {
+        refreshInterval: 3000,
+    });
     const [loadingReadAll, setLoadingReadAll] = useState(false)
 
     const getKey = (pageIndex, previousPageData) => {
