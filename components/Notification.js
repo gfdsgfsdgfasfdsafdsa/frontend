@@ -293,11 +293,25 @@ const Notification = ({ isStudent }) => {
                     <IconButton
                         onClick={markAllRead}
                     >
-                        <Tooltip title="Mark all as read">
+                        {/*
+                        <Tooltip title="">
                             <MarkunreadIcon
                                 sx={{ color: '#fff' }}
                             />
                         </Tooltip>
+                        */}
+                        <Typography
+                            variant="caption"
+                            color="white"
+                            sx={{
+                                textDecoration: "underline",
+                                ":hover": {
+                                    color: '#dedede'
+                                }
+                            }}
+                        >
+                            Mark all as read
+                        </Typography>
                     </IconButton>
                 </Box>
                 {notifD?.length === 0 && (
