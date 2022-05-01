@@ -7,14 +7,16 @@ import SearchBar from "../../../components/SearchBar";
 import ResultList from "../../../components/schooladmin/result/ResultList";
 import {Box, Container} from "@mui/material";
 import NextNProgress from "nextjs-progressbar";
+import {useRef} from "react";
 
 const Results = ({ resultList }) => {
     const [pageIndex, setPageIndex] = useState(1);
     const [searchText, setSearchText] = useState('')
 
-    const { data: results } = useSWR(`school/exam/student/results/?page=${pageIndex}&search=${searchText}`, {
+    const random = useRef(Date.now())
+    const { data: results } = useSWR([`school/exam/student/results/?page=${pageIndex}&search=${searchText}`, random], {
         fallbackData: resultList,
-        revalidateOnFocus: true,
+        revalidateOnFocus: false,
     });
 
     const onKeyUpSearch = (e) => {
