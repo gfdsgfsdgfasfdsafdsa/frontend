@@ -9,7 +9,6 @@ import useSWR, { useSWRConfig } from 'swr'
 import NextNProgress from "nextjs-progressbar";
 import {useRouter} from "next/router";
 import appliedStatus from "../../../libs/appliedStatus";
-import {useRef} from "react";
 
 export default function Applied({ studentAppliedList }){
     const router = useRouter()
@@ -18,12 +17,9 @@ export default function Applied({ studentAppliedList }){
     const [checked, setChecked] = useState([])
     const [status, setStatus] = useState('Pending')
     //const { mutate } = useSWRConfig()
-
-    const random = useRef(Date.now())
-    const { data: studentList, isValidating, mutate } = useSWR([`school/exam/students/applied/?page=${pageIndex}&search=${searchText}&status=${status}`, random],{
-        fallbackData: studentAppliedList,
-        revalidateOnFocus: true ,
-    });
+    const { data: studentList, isValidating, mutate } = useSWR(`school/exam/students/applied/?page=${pageIndex}&search=${searchText}&status=${status}`
+        ,{ fallbackData: studentAppliedList, revalidateOnFocus: false }
+    );
 
     useEffect(() => {
         if(router.query?.name !== undefined && router.query?.status !== undefined){
@@ -34,6 +30,11 @@ export default function Applied({ studentAppliedList }){
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [router.query])
+
+    useEffect(() => {
+        mutate()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [studentAppliedList])
 
     const onKeyUpSearch = (e) => {
         if(e.code === 'Enter')
