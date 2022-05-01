@@ -52,7 +52,7 @@ export default function Result({ result, id }){
                 openDialog={openDialog}
                 setOpenDialog={setOpenDialog}
                 title={'Are you sure you want to delete this result?'}
-                content={'By deleting this the student will be able to apply again and take the exam.'}
+                content={'By deleting this the, student will be able to apply again and take the exam.'}
             />
             {deleted.status ? (
                 <Box
@@ -118,7 +118,7 @@ export default function Result({ result, id }){
                                 color="error"
                                 onClick={() => setOpenDialog(true)}
                             >
-                                Delete
+                                Delete Result
                             </Button>
                         </Box>
                     </Box>

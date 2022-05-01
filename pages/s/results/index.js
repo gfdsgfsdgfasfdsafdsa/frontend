@@ -14,7 +14,7 @@ const Results = ({ resultList }) => {
 
     const { data: results } = useSWR(`school/exam/student/results/?page=${pageIndex}&search=${searchText}`, {
         fallbackData: resultList,
-        revalidateOnFocus: false,
+        revalidateOnFocus: true,
     });
 
     const onKeyUpSearch = (e) => {
