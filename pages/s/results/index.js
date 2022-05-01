@@ -16,7 +16,6 @@ const Results = ({ resultList }) => {
         fallbackData: resultList,
         revalidateOnFocus: false,
     });
-    console.log(resultList)
 
     useEffect(() => {
         mutate()
