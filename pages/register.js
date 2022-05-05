@@ -108,7 +108,7 @@ const Register = () => {
             }
             setLoading(false)
         }).catch((_er) => {
-            setInfo({ message: 'Something went wrong.', error: true, success: false })
+            setInfo({ message: 'Maintenance. please try again later.', error: true, success: false })
             setLoading(false)
         })
     }
