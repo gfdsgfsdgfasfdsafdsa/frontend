@@ -102,13 +102,13 @@ const Register = () => {
                 setEmailExist(true)
             }else if(data?.registered){
                 reset()
-                //setInfo({ message: 'Registered successfully you can now login.', error: false, success: true })
-                setInfo({ message: 'We have sent you an email confirmation. Please confirm to login.', error: false, success: true })
+                setInfo({ message: 'Registered successfully you can now login.', error: false, success: true })
+                //setInfo({ message: 'We have sent you an email confirmation. Please confirm to login.', error: false, success: true })
                 window.location.href = '/register#signup'
             }
             setLoading(false)
         }).catch((_er) => {
-            setInfo({ message: 'Maintenance. please try again later.', error: true, success: false })
+            setInfo({ message: 'Something went wrong.', error: true, success: false })
             setLoading(false)
         })
     }
