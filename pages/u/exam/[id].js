@@ -5,7 +5,7 @@ import useSWR from "swr";
 import Single from "../../../components/student/pages/exam/Single";
 import Loading from "../../../components/Loading";
 import NextNProgress from "nextjs-progressbar";
-import {useRef} from "react";
+import {useEffect, useRef} from "react";
 
 const ExamId = () => {
     const router = useRouter()
@@ -14,6 +14,22 @@ const ExamId = () => {
     const { data: exam, mutate, error } = useSWR(id ? [`student/exam/start/${id}/`, random]: [], {
         revalidateOnFocus: false
     })
+
+    useEffect(() => {
+        if(typeof window !== 'undefined'){
+            enableCamPrev()
+            /*
+            let options = {
+                videoBitsPerSecond : 135000,
+                mimeType: 'video/webm;codecs=vp9,opus',
+            }
+
+            const recorder = new MediaRecorder(window.stream, options)
+            setMediaRecorder(recorder)
+             */
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     if(error?.response?.status === 405)
         router.push(`/u/exam/details/${id}`)
@@ -26,6 +42,32 @@ const ExamId = () => {
             </DashboardLayout>
         )
     }
+
+    //camera
+    async function enableCamPrev(){
+        try{
+            const constraints = {
+                video: {
+                    width: 640,
+                    height: 480,
+                }
+            }
+            await navigator.mediaDevices.getUserMedia(constraints)
+                .then((stream) => {
+                    window.stream = stream
+                })
+                .catch((er) => {
+                    console.log(er)
+                })
+
+            const preview = document.getElementById('cam-preview')
+            preview.srcObject = stream
+
+        }catch (e){
+            alert('Unable to start camera \n Please disable cameras on other tabs \n' + e)
+        }
+    }
+    //end camera
 
     return (
         <>

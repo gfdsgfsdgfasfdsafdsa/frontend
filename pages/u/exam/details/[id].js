@@ -20,6 +20,7 @@ const ExamDetails = () => {
     const [enableCam, setEnableCam] = useState({
         status: false,
         info: 'Enable Camera',
+        loading: false,
     })
 
     const router = useRouter()
@@ -134,7 +135,7 @@ const ExamDetails = () => {
     //Camera
     async function onClickEnableCam(){
         if(enableCam.status){
-            setEnableCam({ status: false, info: 'Enable Camera' })
+            setEnableCam({ status: false, info: 'Enable Camera', loading: false })
             try {
                 window.stream.getTracks().forEach(track => track.stop())
                 window.stream = null
@@ -142,6 +143,7 @@ const ExamDetails = () => {
                 preview.srcObject = null
             }catch{}
         }else{
+            setEnableCam({ status: false, info: 'Enable Camera', loading: true })
             try{
                 const constraints = {
                     video: {
@@ -152,6 +154,7 @@ const ExamDetails = () => {
                 await navigator.mediaDevices.getUserMedia(constraints)
                     .then((stream) => {
                         window.stream = stream
+                        setEnableCam({ status: true, info: 'Disable Camera', loading: false })
                     })
                     .catch((er) => {
                         console.log(er)
@@ -163,7 +166,6 @@ const ExamDetails = () => {
             }catch (e){
                 alert('Unable to start camera \n Please disable cameras on other tabs \n' + e)
             }
-            setEnableCam({ status: true, info: 'Disable Camera' })
         }
     }
 

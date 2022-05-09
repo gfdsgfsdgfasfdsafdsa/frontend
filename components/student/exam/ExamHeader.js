@@ -70,9 +70,9 @@ const ExamHeader = ({ schoolName, subject, hours, minutes, seconds }) => {
                     <video id="cam-preview"
                            style={{
                                border: '2px solid #5048E5',
-                               width: '10rem',
+                               width: '6.6rem',
                                height: '5rem',
-                               backgroundColor: '#828282',
+                               backgroundColor: 'transparent',
                            }}
                            playsInline={true}
                            autoPlay={true}
