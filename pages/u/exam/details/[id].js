@@ -133,11 +133,11 @@ const ExamDetails = () => {
 
     //Camera
     async function onClickEnableCam(){
-        const preview = document.getElementById('video-preview')
         if(enableCam.status){
             try {
                 window.stream.getTracks().forEach(track => track.stop())
                 window.stream = null
+                const preview = document.getElementById('video-preview')
                 preview.srcObject = null
                 setEnableCam({ status: false, info: 'Enable Camera' })
             }catch{}
@@ -152,9 +152,13 @@ const ExamDetails = () => {
                 await navigator.mediaDevices.getUserMedia(constraints)
                     .then((stream) => {
                         window.stream = stream
-                        const preview = document.getElementById('video-preview')
-                        preview.srcObject = stream
                     })
+                    .catch((er) => {
+                        console.log(er)
+                    })
+
+                const preview = document.getElementById('video-preview')
+                preview.srcObject = stream
 
             }catch (e){
                 alert('Unable to start camera \n ' + e)
@@ -228,7 +232,6 @@ const ExamDetails = () => {
                            width: '25rem',
                            height: '19rem',
                            marginTop: '10px',
-                           backgroundColor: '#202124',
                            marginBottom: '50px',
                        }}
                        muted={true}/>
