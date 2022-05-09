@@ -105,6 +105,9 @@ export default function ResultList({ pageIndex, setPageIndex, students,
                         <Table>
                             <TableHead>
                                 <TableRow>
+                                    <TableCell style={{ minWidth: '15px' }}>
+                                        ID
+                                    </TableCell>
                                     <TableCell style={{ minWidth: '300px' }}>
                                         Name
                                     </TableCell>
@@ -136,6 +139,9 @@ export default function ResultList({ pageIndex, setPageIndex, students,
                                         hover
                                         key={student.id}
                                     >
+                                        <TableCell>
+                                            {student.id}
+                                        </TableCell>
                                         <TableCell>
                                             {student.student.name}
                                         </TableCell>

@@ -27,8 +27,10 @@ const Results = ({ resultList }) => {
     }, [resultList])
 
     const onKeyUpSearch = (e) => {
-        if(e.code === 'Enter')
+        if(e.code === 'Enter'){
             setSearchText(e.target.value)
+            setPageIndex(1)
+        }
     }
 
     const onChangeSearch = (e) => {

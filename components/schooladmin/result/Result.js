@@ -6,12 +6,14 @@ import {
     Link as MuiLink,
 } from "@mui/material";
 import {DateTime} from "luxon";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import CustomDialog from "../../CustomDialog";
 import Alert from "../../Alert";
 import Link from 'next/link'
 import AlertCollapse from "../../AlertCollapse";
 import AxiosInstance from "../../../utils/axiosInstance";
+import { jsPDF } from "jspdf";
+import autoTable from 'jspdf-autotable';
 
 export default function Result({ result, id }){
 
@@ -21,6 +23,23 @@ export default function Result({ result, id }){
         error: false,
     })
     const [loading, setLoading] = useState(false)
+
+
+    const courseRecommendArranged = (course) => {
+        if(!course) return []
+        let data = []
+        for(let i = 0; i < course.length; i++){
+            if(!data){
+                data.push({ id: course[i].id, course: course[i].rank, rank: course[i].rank })
+            }else if(data && data[data.length-1]?.rank === course[i].rank){
+                data[data.length-1].course += `${course[i].course}, `
+            }else{
+                data.push({ id: course[i].id, course: course[i].course+', ', rank: course[i].rank })
+            }
+
+        }
+        return data
+    }
 
     const onClickDeleteResult = async () => {
         setOpenDialog(false)
@@ -38,11 +57,132 @@ export default function Result({ result, id }){
                 .then((_r) => {
                     setDeleted({ error: false, status: true })
                     setLoading(false)
+                    setLoading(false)
+                    setLoading(false)
                 }).catch((_e) => {
                     setDeleted({ error: true, status: false })
                     setLoading(false)
                 })
         }
+    }
+
+    function generatePDF() {
+        const pdf = new jsPDF();
+
+        let startX = 15;
+        //let finalY = pdf.lastAutoTable.finalY;
+
+        pdf.setProperties({
+            title: "Result"
+        });
+
+        pdf.setFontSize(30)
+        pdf.setFont(undefined, 'bold').text(result?.student?.name, startX, 20)
+            .setFont(undefined, 'normal')
+
+        pdf.setFontSize(10)
+        pdf.text(`Date Taken ${DateTime.fromISO(result?.date_taken).toFormat('LLL dd, yyyy')}`, startX, 25);
+
+        pdf.setFontSize(18)
+        pdf.setFont(undefined, 'bold').text(`Student Information`, startX, 40);
+
+        pdf.setFontSize(12)
+        pdf.setFont(undefined, 'normal').text(`Strand: `, startX, 47);
+        pdf.setFont(undefined, 'normal').text(result?.student?.strand, startX+20, 47);
+
+        pdf.setFont(undefined, 'normal').text(`Age: `, startX, 54);
+        pdf.setFont(undefined, 'normal').text(result?.student?.age.toString(), startX+20, 54);
+
+        pdf.setFont(undefined, 'normal').text(`School: `, startX, 61);
+        pdf.setFont(undefined, 'normal').text(result?.student?.school, startX+20, 61);
+
+        pdf.setFont(undefined, 'normal').text(`Gender: `, startX, 68);
+        pdf.setFont(undefined, 'normal').text(result?.student?.gender, startX+20, 68);
+
+
+        let spaceExam = 10*4; //3 lines for subject + exam result title = 4
+
+        pdf.setFontSize(18)
+        pdf.setFont(undefined, 'bold').text(`Exam Result`, startX, 40+spaceExam);
+
+
+        pdf.setFontSize(12)
+        {result?.result_details.map((s, i) => {
+            pdf.setFont(undefined, 'normal').text(`${s.subject}`, startX, 47+(i*5)+spaceExam);
+            pdf.setFont(undefined, 'normal').text(`${s.score}/${s.overall}`, startX+30, 47+(i*5)+spaceExam);
+        })}
+
+
+        let spaceRecommendCourse = 68+spaceExam+5;
+
+
+        pdf.setFontSize(18);
+        pdf.setFont(undefined, 'bold').text(`Course Recommended`, startX, spaceRecommendCourse);
+
+        let coursesRecommended = courseRecommendArranged(result?.result_courses).map((d, i) => (
+            [d.rank, d.course.substring(0, d.course.length - 2)]
+        ))
+
+        if(coursesRecommended){
+            autoTable(pdf, {})
+            autoTable(pdf, {
+                theme: 'grid',
+                startY: spaceRecommendCourse+5,
+                styles: {
+                    fontStyle: 'bold',
+                    textColor: 20,
+                    lineColor: 20,
+                },
+                head: [['Rank', 'Courses']],
+                body: [...coursesRecommended],
+                headStyles: { halign: 'center',},
+                bodyStyles: { halign: 'center', fontStyle: 'normal' },
+                columnStyles: {
+                    1: {
+                        halign: 'left',
+                    }
+                },
+            })
+        }else{
+            pdf.setFontSize(12);
+            pdf.setFont(undefined, 'normal').text('Unable to calculate score', startX, 80+spaceExam);
+        }
+        console.error = () => {};
+
+        let spaceRegression = spaceRecommendCourse + ((coursesRecommended?.length+1)*10) + 6; //3 rank line + table header = 4
+
+        pdf.setFontSize(18);
+        pdf.setFont(undefined, 'bold').text(`Regression Model`, startX, spaceRegression);
+
+        pdf.setFontSize(12);
+        pdf.setFont(undefined, 'normal').text(result?.formula, startX, spaceRegression + 10);
+        let regression = result?.regression_model.split('<br/>');
+        let formula = regression[0].split('+')
+        let display_formula = ''
+        let j = 2
+        formula.map((d, i) => {
+            if(i === formula.length - 1){
+                display_formula += d
+            }else if(i === j){
+                display_formula += '\r\n' + d + ' + '
+                j+=2
+            }else{
+                display_formula += d + ' + '
+            }
+        })
+        pdf.setFont(undefined, 'normal').text(`${display_formula}`, startX, spaceRegression + 20);
+        pdf.setFont(undefined, 'normal').text(``, startX, spaceRegression + 30);
+        pdf.setFont(undefined, 'normal').text(`${regression[1]}`, startX, spaceRegression + 35);
+
+        return pdf
+    }
+
+    function previewPDF(){
+        generatePDF().output('dataurlnewwindow')
+    }
+
+    function downloadPDF(){
+        generatePDF().save('test.pdf')
     }
 
     return (
@@ -112,6 +252,22 @@ export default function Result({ result, id }){
                             {result?.student.name}
                         </Typography>
                         <Box>
+                            <Button
+                                variant="outlined"
+                                size="small"
+                                onClick={downloadPDF}
+                                sx={{ mr: 1 }}
+                            >
+                                Download PDF
+                            </Button>
+                            <Button
+                                variant="outlined"
+                                size="small"
+                                onClick={previewPDF}
+                                sx={{ mr: 1 }}
+                            >
+                                PDF Preview
+                            </Button>
                             <Button
                                 variant="outlined"
                                 size="small"
@@ -252,7 +408,7 @@ export default function Result({ result, id }){
                                                     {s.subject}
                                                 </TableCell>
                                                 <TableCell>
-                                                    {s.score}
+                                                    {s.score} / {s.overall}
                                                 </TableCell>
                                             </TableRow>
                                         ))}
@@ -261,7 +417,61 @@ export default function Result({ result, id }){
                             </TableContainer>
                         </CardContent>
                     </Card>
+                    <Card sx={{ marginTop: '20px' }}>
+                        <CardContent sx={{ padding: '12px 24px' }}>
+                            <Typography variant="cool">
+                                Course Recommended
+                            </Typography>
+                            <Box>
+                                <Typography variant="caption" mb={2}>
+                                    Same no. in ranking has no particular order
+                                </Typography>
+                            </Box>
+                            {result?.result_courses?.length === 0 ? (
+                                <Box sx={{ pl: 5, mt: 2 }}>
+                                    <Typography variant="body2" mb={2}>
+                                        Unable to get result due to score.
+                                    </Typography>
+                                </Box>
+                            ): (
+                                <TableContainer sx={{ marginTop: '10px' }}>
+                                    <Table sx={{ minWidth: 300 }} size="small" aria-label="a dense table">
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell sx={{ width: 150 }}>
+                                                    Rank
+                                                </TableCell>
+                                                <TableCell align="left">
+                                                    Course
+                                                </TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {courseRecommendArranged(result?.result_courses).map((d, i) => (
+                                                <TableRow key={d.id}>
+                                                    <TableCell sx={{ pl: 4 }}>
+                                                        {d.rank}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {d.course.substring(0, d.course.length - 2)}
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                            {/*result?.result_courses.map((d, i) => (
+                                            <Box key={d.id} sx={{ pl: 5 }}>
+                                                <Typography variant="cool" mb={2}>
+                                                    {d.rank} <span style={{ marginLeft: '10px' }}>{d.course}</span>
+                                                </Typography>
+                                            </Box>
+                                        ))*/}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            )}
+                        </CardContent>
+                    </Card>
                     <Box mt={3} pb={10} ml={3}>
+                        {/*
                         <Box>
                             <Typography variant="cool" mb={2}>
                                 Course Recommended
@@ -272,13 +482,7 @@ export default function Result({ result, id }){
                                 Same no. in ranking has no particular order
                             </Typography>
                         </Box>
-                        {result?.result_courses.map((d, i) => (
-                            <Box key={d.id} sx={{ pl: 5 }}>
-                                <Typography variant="cool" mb={2}>
-                                    {d.rank} <span style={{ marginLeft: '10px' }}>{d.course}</span>
-                                </Typography>
-                            </Box>
-                        ))}
+                        */}
                         <Box>
                             <Typography variant="cool" mb={2}>
                                 Regression model
