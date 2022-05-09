@@ -21,7 +21,7 @@ const SubjectName = memo(function SubjectName({ name }) {
     )
 })
 
-const ExamHeader = ({ schoolName, subject, hours, minutes, seconds }) => {
+const ExamHeader = ({ schoolName, subject, hours, minutes, seconds, videoPreview }) => {
 
     return (
         <>
@@ -67,7 +67,8 @@ const ExamHeader = ({ schoolName, subject, hours, minutes, seconds }) => {
                     </Box>
                 </Box>
                 <Box>
-                    <video id="cam-preview"
+                    <video
+                           ref={videoPreview}
                            style={{
                                border: '2px solid #5048E5',
                                width: '6.6rem',

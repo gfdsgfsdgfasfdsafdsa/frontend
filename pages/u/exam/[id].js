@@ -14,9 +14,12 @@ const ExamId = () => {
     const { data: exam, mutate, error } = useSWR(id ? [`student/exam/start/${id}/`, random]: [], {
         revalidateOnFocus: false
     })
+    const videoPreview = useRef()
 
     useEffect(() => {
-        if(typeof window !== 'undefined'){
+        console.log(document)
+        if(typeof window !== 'undefined' && document){
+            console.log(document)
             enableCamPrev()
             /*
             let options = {
@@ -60,8 +63,8 @@ const ExamId = () => {
                     console.log(er)
                 })
 
-            const preview = document.getElementById('cam-preview')
-            preview.srcObject = stream
+            //const preview = document.getElementById('cam-preview')
+            videoPreview.current.srcObject = stream
 
         }catch (e){
             alert('Unable to start camera \n Please disable cameras on other tabs \n' + e)
@@ -79,7 +82,13 @@ const ExamId = () => {
                     </title>
                 </Head>
                 {!exam ? <Loading/>
-                    : <Single school={exam} mutate={mutate} router={router} id={id}/>}
+                    : <Single
+                        school={exam}
+                        mutate={mutate}
+                        router={router}
+                        id={id}
+                        videoPreview={videoPreview}
+                    />}
             </DashboardLayout>
         </>
     )

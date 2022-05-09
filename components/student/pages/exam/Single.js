@@ -24,7 +24,7 @@ function TabPanel(props) {
     );
 }
 
-const Single = ({ school, router, id, mutate }) => {
+const Single = ({ school, router, id, mutate, videoPreview }) => {
 
     //const { mutate: mutateSWR } = useSWRConfig()
 
@@ -173,6 +173,7 @@ const Single = ({ school, router, id, mutate }) => {
                     hours={hours}
                     minutes={minutes}
                     seconds={seconds}
+                    videoPreview={videoPreview}
                 />
                 <Container maxWidth={false} sx={{ mt: 3 }}>
                     <Box sx={{ width: '100%' }}>
