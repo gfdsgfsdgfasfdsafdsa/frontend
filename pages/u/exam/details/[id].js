@@ -134,12 +134,12 @@ const ExamDetails = () => {
     //Camera
     async function onClickEnableCam(){
         if(enableCam.status){
+            setEnableCam({ status: false, info: 'Enable Camera' })
             try {
                 window.stream.getTracks().forEach(track => track.stop())
                 window.stream = null
                 const preview = document.getElementById('video-preview')
                 preview.srcObject = null
-                setEnableCam({ status: false, info: 'Enable Camera' })
             }catch{}
         }else{
             try{
@@ -161,7 +161,7 @@ const ExamDetails = () => {
                 preview.srcObject = stream
 
             }catch (e){
-                alert('Unable to start camera \n ' + e)
+                alert('Unable to start camera \n Please disable cameras on other tabs \n' + e)
             }
             setEnableCam({ status: true, info: 'Disable Camera' })
         }

@@ -33,14 +33,63 @@ const Single = ({ school, router, id, mutate }) => {
     const [answers, setAnswers] = useState({})
     const [examSubject, setExamSubject] = useState(school.school_exam.exam_subjects)
 
+    //Camera
+    const [mediaRecorder, setMediaRecorder] = useState(null)
+    const camEnabled = true
+
     useEffect(() => {
         school.school_exam.exam_subjects.map((subject) => {
             let a = answers
             a[subject.name] = []
             setAnswers(a)
         })
+        //Camera
+        if(typeof window !== 'undefined' && camEnabled){
+            enableCamPreview().catch((e) => {
+                console.log(e)
+            })
+            /*
+            let options = {
+                videoBitsPerSecond : 135000,
+                mimeType: 'video/webm;codecs=vp9,opus',
+            }
+
+            const recorder = new MediaRecorder(window.stream, options)
+            setMediaRecorder(recorder)
+             */
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+    //camera
+    async function enableCamPreview(){
+        try {
+            window.stream.getTracks().forEach(track => track.stop())
+            window.stream = null
+        }catch{}
+        try{
+            const constraints = {
+                audio: false,
+                video: {
+                    width: 640,
+                    height: 480,
+                }
+            }
+            await navigator.mediaDevices.getUserMedia(constraints)
+                .then((stream) => {
+                    window.stream = stream
+                })
+                .catch((er) => {
+                    console.log(er)
+                })
+
+            const preview = document.getElementById('cam-preview')
+            preview.srcObject = stream
+
+        }catch (e){
+            alert('Unable to start camera \n Please disable cameras on other tabs \n' + e)
+        }
+    }
+    //end camera
 
     const handleChange = (_e, newValue) => {
         setTabValue(newValue);

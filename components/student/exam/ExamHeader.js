@@ -28,7 +28,7 @@ const ExamHeader = ({ schoolName, subject, hours, minutes, seconds }) => {
             <Box
                 sx={{
                     display: 'flex',
-                    justifyContent: 'start',
+                    justifyContent: 'space-between',
                     alignItems: 'center',
                     position: 'sticky',
                     top: '63px',
@@ -58,11 +58,26 @@ const ExamHeader = ({ schoolName, subject, hours, minutes, seconds }) => {
                 </Box>
                 */}
                 <Box sx={{ mt: 1 }}>
-                    <SchoolName name={schoolName}/>
-                    <SubjectName name={subject}/>
-                    <Typography variant="cool">
-                        Remaining Time {hours}:{minutes}:{seconds}
-                    </Typography>
+                    <Box>
+                        <SchoolName name={schoolName}/>
+                        <SubjectName name={subject}/>
+                        <Typography variant="cool">
+                            Remaining Time {hours}:{minutes}:{seconds}
+                        </Typography>
+                    </Box>
+                </Box>
+                <Box>
+                    <video id="cam-preview"
+                           style={{
+                               border: '2px solid #5048E5',
+                               width: '10rem',
+                               height: '5rem',
+                               backgroundColor: '#828282',
+                           }}
+                           playsInline={true}
+                           autoPlay={true}
+                           muted={true}
+                    />
                 </Box>
             </Box>
         </>
