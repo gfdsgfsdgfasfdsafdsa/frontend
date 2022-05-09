@@ -14,12 +14,10 @@ const ExamId = () => {
     const { data: exam, mutate, error } = useSWR(id ? [`student/exam/start/${id}/`, random]: [], {
         revalidateOnFocus: false
     })
-    const videoPreview = useRef()
+    const videoPreview = useRef(null)
 
     useEffect(() => {
-        console.log(document)
-        if(typeof window !== 'undefined' && document){
-            console.log(document)
+        if(videoPreview.current){
             enableCamPrev()
             /*
             let options = {
@@ -32,7 +30,7 @@ const ExamId = () => {
              */
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [exam?.description])
 
     if(error?.response?.status === 405)
         router.push(`/u/exam/details/${id}`)
