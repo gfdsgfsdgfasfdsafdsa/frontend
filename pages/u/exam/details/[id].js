@@ -17,6 +17,11 @@ import NextNProgress from "nextjs-progressbar";
 import AlertCollapse from "../../../../components/AlertCollapse";
 
 const ExamDetails = () => {
+    const [enableCam, setEnableCam] = useState({
+        status: false,
+        info: 'Enable Camera',
+    })
+
     const router = useRouter()
     const { mutate } = useSWRConfig()
     const { id } = router.query
@@ -126,6 +131,38 @@ const ExamDetails = () => {
         }
     }
 
+    //Camera
+    async function onClickEnableCam(){
+        const preview = document.getElementById('video-preview')
+        if(enableCam.status){
+            try {
+                window.stream.getTracks().forEach(track => track.stop())
+                window.stream = null
+                preview.srcObject = null
+                setEnableCam({ status: false, info: 'Enable Camera' })
+            }catch{}
+        }else{
+            try{
+                const constraints = {
+                    video: {
+                        width: 640,
+                        height: 480,
+                    }
+                }
+                await navigator.mediaDevices.getUserMedia(constraints)
+                    .then((stream) => {
+                        window.stream = stream
+                        const preview = document.getElementById('video-preview')
+                        preview.srcObject = stream
+                    })
+
+            }catch (e){
+                alert('Unable to start camera \n ' + e)
+            }
+            setEnableCam({ status: true, info: 'Disable Camera' })
+        }
+    }
+
     return (
         <>
             <NextNProgress height={3}/>
@@ -164,9 +201,37 @@ const ExamDetails = () => {
                 {exam_details?.subjects !== undefined && (
                     <SubjectLists subjects={exam_details.subjects} />
                 )}
-                <Box sx={{ display: 'flex', justifyContent: 'end' }}>
+                <Box sx={{
+                    display: 'flex',
+                    justifyContent: {
+                        md: 'space-between',
+                        sm: 'unset'
+                    }
+                }}>
+                    <Box>
+                        <Button
+                            variant="contained"
+                            size="small"
+                            sx={{ mt: 2 }}
+                            color="primary"
+                            onClick={onClickEnableCam}
+                        >
+                            {enableCam.info}
+                        </Button>
+                    </Box>
                     {displayBtn(exam_details?.status)}
                 </Box>
+                <div style={{ marginTop: '20px' }}>Please ignore this camera currently on test</div>
+                <video id="video-preview"
+                       style={{
+                           border: '5px solid #5048E5',
+                           width: '25rem',
+                           height: '19rem',
+                           marginTop: '10px',
+                           backgroundColor: '#202124',
+                           marginBottom: '50px',
+                       }}
+                       muted={true}/>
             </Container>
         </>
     )
