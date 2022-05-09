@@ -5,7 +5,7 @@ import SchoolInfoHeader from '../../../../components/student/exam/SchoolInfoHead
 import {
     Box,
     Button,
-    Container,
+    Container, Typography,
 } from '@mui/material'
 import useSWR, {useSWRConfig} from "swr";
 import {useRouter} from "next/router";
@@ -225,6 +225,9 @@ const ExamDetails = () => {
                     </Box>
                     {displayBtn(exam_details?.status)}
                 </Box>
+                <Typography variant="caption" mb={2}>
+                    If you switched camera disable and enable again.
+                </Typography>
                 <div style={{ marginTop: '20px' }}>Please ignore this camera currently on test</div>
                 <video id="video-preview"
                        style={{
@@ -233,7 +236,10 @@ const ExamDetails = () => {
                            height: '19rem',
                            marginTop: '10px',
                            marginBottom: '50px',
+                           backgroundColor: '#828282',
                        }}
+                       playsInline={true}
+                       autoPlay={true}
                        muted={true}/>
             </Container>
         </>
