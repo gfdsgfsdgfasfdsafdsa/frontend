@@ -57,29 +57,30 @@ export default function Result({ result, id }){
             })
                 .then(async (_r) => {
                     if(result?.video !== 'Disabled' && result?.video !== 'Enabled'){
-                        let accessToken = null
-                        await axios.post('https://www.googleapis.com/oauth2/v4/token', {
-                            "client_id": '1046398706985-kh1ef3qo4ntiqdef65n67ll822h8e39f.apps.googleusercontent.com',
-                            "client_secret": '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',
-                            "refresh_token": '1//04dTyJXtpfsMDCgYIARAAGAQSNwF-L9IrytHWCOblt6rVheKIIhoRzch4UJ6MONUWCp952SRppORX6wGE_j3B0FfvftailuwOQJY',
-                            "grant_type": "refresh_token"
-                        }, {
-                            headers: {
-                                'Content-Type': 'application/json'
+                        try{
+                            let accessToken = null
+                            await axios.post('https://www.googleapis.com/oauth2/v4/token', {
+                                "client_id": '1046398706985-kh1ef3qo4ntiqdef65n67ll822h8e39f.apps.googleusercontent.com',
+                                "client_secret": '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',
+                                "refresh_token": '1//04dTyJXtpfsMDCgYIARAAGAQSNwF-L9IrytHWCOblt6rVheKIIhoRzch4UJ6MONUWCp952SRppORX6wGE_j3B0FfvftailuwOQJY',
+                                "grant_type": "refresh_token"
+                            }, {
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            }).then((res) => {
+                                accessToken = res.data.access_token
+                            }).catch((_e) => {})
+                            if(accessToken){
+                                await axios.delete(`https://www.googleapis.com/drive/v3/files/${result?.video}`,
+                                    {
+                                        headers: {
+                                            Authorization: `Bearer ${accessToken}`,
+                                        }
+                                    }).then((res) => {
+                                }).catch((_e) => {})
                             }
-                        }).then((res) => {
-                            accessToken = res.data.access_token
-                        })
-                        if(accessToken){
-                            await axios.delete(`https://www.googleapis.com/drive/v3/files/${result?.video}`,
-                                {
-                                    headers: {
-                                        Authorization: `Bearer ${accessToken}`,
-                                    }
-                                }).then((res) => {
-                                console.log(res)
-                            })
-                        }
+                        }catch{}
                     }
                     setDeleted({ error: false, status: true })
                     setLoading(false)
