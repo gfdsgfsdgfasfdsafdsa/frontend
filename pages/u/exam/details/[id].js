@@ -54,7 +54,8 @@ const ExamDetails = () => {
 
     const startExam = async () => {
         setStatus({ error: false, loading: true, message: 'Starting Examination..' })
-        await AxiosInstance.post(`student/exam/start/${id}/`, { 'start': 'yes' })
+        await AxiosInstance.post(`student/exam/start/${id}/`,
+            { 'start': enableCam.status ? 'Enabled': 'Disabled' })
             .then((_r) => {
                 return router.push(`/u/exam/${id}`)
             }).catch((_e) => {
@@ -157,6 +158,7 @@ const ExamDetails = () => {
                         setEnableCam({ status: true, info: 'Disable Camera', loading: false })
                     })
                     .catch((er) => {
+                        setEnableCam({ status: true, info: 'Disable Camera', loading: false })
                         console.log(er)
                     })
 
@@ -209,40 +211,44 @@ const ExamDetails = () => {
                 )}
                 <Box sx={{
                     display: 'flex',
-                    justifyContent: {
-                        md: 'space-between',
-                        sm: 'unset'
-                    }
+                    justifyContent: exam_details?.status === 'Accepted' ? 'space-between': 'end'
                 }}>
-                    <Box>
-                        <Button
-                            variant="contained"
-                            size="small"
-                            sx={{ mt: 2 }}
-                            color="primary"
-                            onClick={onClickEnableCam}
-                        >
-                            {enableCam.info}
-                        </Button>
-                    </Box>
+                    {exam_details?.status === 'Accepted' && (
+                        <Box>
+                            <Button
+                                variant="contained"
+                                size="small"
+                                sx={{ mt: 2 }}
+                                color="primary"
+                                onClick={onClickEnableCam}
+                                disabled={enableCam.loading}
+                            >
+                                {enableCam.info}
+                            </Button>
+                        </Box>
+                    )}
                     {displayBtn(exam_details?.status)}
                 </Box>
-                <Typography variant="caption" mb={2}>
-                    If you switched camera disable and enable again.
-                </Typography>
-                <div style={{ marginTop: '20px' }}>Please ignore this camera currently on test</div>
-                <video id="video-preview"
-                       style={{
-                           border: '5px solid #5048E5',
-                           width: '25rem',
-                           height: '19rem',
-                           marginTop: '10px',
-                           marginBottom: '50px',
-                           backgroundColor: '#828282',
-                       }}
-                       playsInline={true}
-                       autoPlay={true}
-                       muted={true}/>
+                {exam_details?.status === 'Accepted' && (
+                    <Box>
+                        <Typography variant="caption" mb={2}>
+                            If you switched camera disable and enable again.
+                        </Typography>
+                        <div style={{ marginTop: '20px' }}>Please ignore this camera currently on test</div>
+                        <video id="video-preview"
+                               style={{
+                                   border: '5px solid #5048E5',
+                                   width: '25rem',
+                                   height: '19rem',
+                                   marginTop: '10px',
+                                   marginBottom: '50px',
+                                   backgroundColor: '#828282',
+                               }}
+                               playsInline={true}
+                               autoPlay={true}
+                               muted={true}/>
+                    </Box>
+                )}
             </Container>
         </>
     )

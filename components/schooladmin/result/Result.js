@@ -389,6 +389,19 @@ export default function Result({ result, id }){
                             <Typography variant="cool">
                                 Exam Result
                             </Typography>
+                            <Typography variant="body2">
+                                No. of times user switched tab: {result?.tab_switch}
+                            </Typography>
+                            <Typography variant="body2">
+                                Video Link:
+                                &nbsp;
+                                {result?.video !== 'Disabled' && (
+                                    <a target="_blank" href={`https://drive.google.com/file/d/${result?.video}/view`}>
+                                        {`https://drive.google.com/file/d/${result?.video}/view`}
+                                    </a>
+
+                                )}
+                            </Typography>
                             <TableContainer sx={{ marginTop: '10px' }}>
                                 <Table sx={{ minWidth: 300 }} size="small" aria-label="a dense table">
                                     <TableHead>
