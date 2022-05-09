@@ -64,7 +64,10 @@ const Single = ({ school, router, id, mutate, videoPreview, recordedBlobs, media
     })
     const sentToTheServer = useRef(false)
 
+    const saveResultDetailsSubmitted = useRef(false)
     async function saveResultDetails(video_id){
+        if(saveResultDetailsSubmitted.current) return
+        saveResultDetailsSubmitted.current = true
         let switchTab = 0
         if(localStorage.getItem(school?.id.toString())){
             switchTab = parseInt(localStorage.getItem(school?.id.toString()))
@@ -110,7 +113,6 @@ const Single = ({ school, router, id, mutate, videoPreview, recordedBlobs, media
             }
         ).then(async ({ data }) => {
             await saveResultDetails(data.id)
-            setSubmitState({ ...submitState, info: 'Saving video details.' })
         }).catch((e) => {
             console.log(e)
         })
@@ -119,7 +121,11 @@ const Single = ({ school, router, id, mutate, videoPreview, recordedBlobs, media
     const submitAns = async () => {
         if(sentToTheServer.current) return
         try{
-            if(school?.video === 'Enabled') mediaRecorder.current.stop()
+            if(school?.video === 'Enabled'){
+                mediaRecorder.current.stop()
+                window.stream.getTracks().forEach(track => track.stop())
+                window.stream = null
+            }
         }catch{}
         await AxiosInstance.post(`student/exam/submit/${school.id}/`, answers).then(async (_r) => {
             sentToTheServer.current = true

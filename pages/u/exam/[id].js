@@ -18,7 +18,6 @@ const ExamId = () => {
     const mediaRecorder = useRef(null)
     const recordedBlobs = useRef([])
     const [start, setStart] = useState(false)
-    console.log(recordedBlobs)
 
     useEffect(() => {
         if(exam?.video === 'Enabled') {
@@ -64,9 +63,11 @@ const ExamId = () => {
 
     //camera
     async function enableCamPrev(){
+        /*
         try{
             window.stream.getTracks().forEach(track => track.stop())
         }catch{}
+         */
         try{
             const constraints = {
                 video: {
@@ -87,7 +88,7 @@ const ExamId = () => {
             setStart(true)
 
         }catch (e){
-            alert('Unable to start camera \n Please disable cameras on other tabs \n' + e)
+            alert('Unable to start camera \n' + e)
         }
     }
     //end camera

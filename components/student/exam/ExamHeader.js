@@ -66,20 +66,22 @@ const ExamHeader = ({ schoolName, subject, hours, minutes, seconds, videoPreview
                         </Typography>
                     </Box>
                 </Box>
-                <Box>
-                    <video
-                        ref={videoPreview}
-                        style={{
-                            border: '2px solid #5048E5',
-                            width: '6.6rem',
-                            height: '5rem',
-                            backgroundColor: 'transparent',
-                        }}
-                        playsInline={true}
-                        autoPlay={true}
-                        muted={true}
-                    />
-                </Box>
+                {videoEnabled && (
+                    <Box>
+                        <video
+                            ref={videoPreview}
+                            style={{
+                                border: '2px solid #5048E5',
+                                width: '6.6rem',
+                                height: '5rem',
+                                backgroundColor: 'transparent',
+                            }}
+                            playsInline={true}
+                            autoPlay={true}
+                            muted={true}
+                        />
+                    </Box>
+                )}
             </Box>
         </>
     )

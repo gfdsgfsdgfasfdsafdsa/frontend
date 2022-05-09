@@ -14,6 +14,7 @@ import AlertCollapse from "../../AlertCollapse";
 import AxiosInstance from "../../../utils/axiosInstance";
 import { jsPDF } from "jspdf";
 import autoTable from 'jspdf-autotable';
+import axios from "axios";
 
 export default function Result({ result, id }){
 
@@ -54,7 +55,32 @@ export default function Result({ result, id }){
                     student_id: result?.student?.id
                 }
             })
-                .then((_r) => {
+                .then(async (_r) => {
+                    if(result?.video !== 'Disabled' && result?.video !== 'Enabled'){
+                        let accessToken = null
+                        await axios.post('https://www.googleapis.com/oauth2/v4/token', {
+                            "client_id": '1046398706985-kh1ef3qo4ntiqdef65n67ll822h8e39f.apps.googleusercontent.com',
+                            "client_secret": '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',
+                            "refresh_token": '1//04dTyJXtpfsMDCgYIARAAGAQSNwF-L9IrytHWCOblt6rVheKIIhoRzch4UJ6MONUWCp952SRppORX6wGE_j3B0FfvftailuwOQJY',
+                            "grant_type": "refresh_token"
+                        }, {
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        }).then((res) => {
+                            accessToken = res.data.access_token
+                        })
+                        if(accessToken){
+                            await axios.delete(`https://www.googleapis.com/drive/v3/files/${result?.video}`,
+                                {
+                                    headers: {
+                                        Authorization: `Bearer ${accessToken}`,
+                                    }
+                                }).then((res) => {
+                                console.log(res)
+                            })
+                        }
+                    }
                     setDeleted({ error: false, status: true })
                     setLoading(false)
                     setLoading(false)
@@ -119,9 +145,13 @@ export default function Result({ result, id }){
         pdf.setFontSize(18);
         pdf.setFont(undefined, 'bold').text(`Course Recommended`, startX, spaceRecommendCourse);
 
-        let coursesRecommended = courseRecommendArranged(result?.result_courses).map((d, i) => (
-            [d.rank, d.course.substring(0, d.course.length - 2)]
-        ))
+        let additionalTblRow = 0
+        let coursesRecommended = courseRecommendArranged(result?.result_courses).map((d, i) => {
+            if(d.course.length > 66){
+                additionalTblRow += Math.round(d.course.length/66)*3
+            }
+            return [d.rank, d.course.substring(0, d.course.length - 2)]
+        })
 
         if(coursesRecommended){
             autoTable(pdf, {})
@@ -149,7 +179,7 @@ export default function Result({ result, id }){
         }
         console.error = () => {};
 
-        let spaceRegression = spaceRecommendCourse + ((coursesRecommended?.length+1)*10) + 6; //3 rank line + table header = 4
+        let spaceRegression = spaceRecommendCourse + ((coursesRecommended?.length+1)*10) + 6 + additionalTblRow; //3 rank line + table header = 4
 
         pdf.setFontSize(18);
         pdf.setFont(undefined, 'bold').text(`Regression Model`, startX, spaceRegression);
@@ -389,17 +419,31 @@ export default function Result({ result, id }){
                             <Typography variant="cool">
                                 Exam Result
                             </Typography>
-                            <Typography variant="body2">
+                            <Typography
+                                variant="body2"
+                                sx={{ ml: 1 }}
+                            >
                                 No. of times user switched tab: {result?.tab_switch}
                             </Typography>
-                            <Typography variant="body2">
+                            <Typography
+                                variant="body2"
+                                sx={{ ml: 1 }}
+                            >
                                 Video Link:
                                 &nbsp;
-                                {result?.video !== 'Disabled' && (
-                                    <a target="_blank" href={`https://drive.google.com/file/d/${result?.video}/view`}>
+                                {result?.video !== 'Disabled' ? (
+                                    <MuiLink
+                                        href={`https://drive.google.com/file/d/${result?.video}/view`}
+                                        target="_blank"
+                                        color="primary"
+                                        variant="overline"
+                                    >
                                         {`https://drive.google.com/file/d/${result?.video}/view`}
-                                    </a>
-
+                                    </MuiLink>
+                                ):(
+                                    result?.video !== 'Enabled' ? (
+                                        'Unable to Save Video.'
+                                    ): (result?.video)
                                 )}
                             </Typography>
                             <TableContainer sx={{ marginTop: '10px' }}>
@@ -483,7 +527,7 @@ export default function Result({ result, id }){
                             )}
                         </CardContent>
                     </Card>
-                    <Box mt={3} pb={10} ml={3}>
+                    <Box mt={3} pb={10} ml={2}>
                         {/*
                         <Box>
                             <Typography variant="cool" mb={2}>
@@ -501,7 +545,7 @@ export default function Result({ result, id }){
                                 Regression model
                             </Typography>
                         </Box>
-                        <Box sx={{ ml: 5 }}>
+                        <Box sx={{ ml: 3 }}>
                             <Box mt={1}>
                                 <Typography
                                     sx={{

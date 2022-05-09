@@ -57,6 +57,10 @@ const ExamDetails = () => {
         await AxiosInstance.post(`student/exam/start/${id}/`,
             { 'start': enableCam.status ? 'Enabled': 'Disabled' })
             .then((_r) => {
+                try{
+                    window.stream.getTracks().forEach(track => track.stop())
+                    window.stream = null
+                }catch{}
                 return router.push(`/u/exam/${id}`)
             }).catch((_e) => {
                 setStatus({ error: true, loading: false, message: 'Unable to start Exam' })
@@ -140,8 +144,8 @@ const ExamDetails = () => {
             try {
                 window.stream.getTracks().forEach(track => track.stop())
                 window.stream = null
-                const preview = document.getElementById('video-preview')
-                preview.srcObject = null
+                //const preview = document.getElementById('video-preview')
+                //preview.srcObject = null
             }catch{}
         }else{
             setEnableCam({ status: false, info: 'Enable Camera', loading: true })
