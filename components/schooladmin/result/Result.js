@@ -303,6 +303,7 @@ export default function Result({ result, id }){
                                 variant="outlined"
                                 size="small"
                                 color="error"
+                                disabled={loading}
                                 onClick={() => setOpenDialog(true)}
                             >
                                 Delete Result
@@ -432,7 +433,16 @@ export default function Result({ result, id }){
                             >
                                 Video Link:
                                 &nbsp;
-                                {result?.video !== 'Disabled' ? (
+                                {result?.video === 'Disabled' || result?.video === 'Enabled' ? (
+                                    <>
+                                        {result?.video === 'Disabled' && (
+                                            'Disabled'
+                                        )}
+                                        {result?.video === 'Enabled' && (
+                                            'Unable to Save Video'
+                                        )}
+                                    </>
+                                ):(
                                     <MuiLink
                                         href={`https://drive.google.com/file/d/${result?.video}/view`}
                                         target="_blank"
@@ -441,10 +451,6 @@ export default function Result({ result, id }){
                                     >
                                         {`https://drive.google.com/file/d/${result?.video}/view`}
                                     </MuiLink>
-                                ):(
-                                    result?.video !== 'Enabled' ? (
-                                        'Unable to Save Video.'
-                                    ): (result?.video)
                                 )}
                             </Typography>
                             <TableContainer sx={{ marginTop: '10px' }}>

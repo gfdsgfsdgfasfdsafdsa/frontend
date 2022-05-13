@@ -59,7 +59,8 @@ const ResultList = ({ pageIndex, setPageIndex, results }) => {
                                             <Box
                                                 sx={{
                                                     alignItems: 'center',
-                                                    display: 'flex'
+                                                    display: 'flex',
+                                                    height: 15
                                                 }}
                                             >
                                                 <Image
