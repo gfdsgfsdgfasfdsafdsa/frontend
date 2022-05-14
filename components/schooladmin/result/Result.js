@@ -216,7 +216,7 @@ export default function Result({ result, id }){
         }
 
 
-		let spaceRegression = spaceRecommendCourse+10 + ((coursesRecommended?.length+1)*10) + 6 + additionalTblRow;
+		let spaceRegression = spaceRecommendCourse + ((coursesRecommended?.length+1)*10) + additionalTblRow;
 
 		pdf.setFontSize(13);
 		pdf.setFont(undefined, 'bold').text(`REGRESSION MODEL`, startX, spaceRegression);
