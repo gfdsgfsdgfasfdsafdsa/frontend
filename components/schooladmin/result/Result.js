@@ -222,7 +222,7 @@ export default function Result({ result, id }){
 		pdf.setFont(undefined, 'bold').text(`REGRESSION MODEL`, startX, spaceRegression);
 
 		pdf.setFontSize(11);
-        pdf.setFont(undefined, 'normal').text(result?.formula, startX, spaceRegression + 10);
+        pdf.setFont(undefined, 'normal').text(result?.formula.replaceAll("&beta;", "B"), startX, spaceRegression + 10);
         let regression = result?.regression_model.split('<br/>');
         let formula = regression[0].split('+')
         let display_formula = ''
