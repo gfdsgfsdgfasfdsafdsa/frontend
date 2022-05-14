@@ -179,15 +179,15 @@ export default function Result({ result, id }){
 		pdf.setFontSize(13);
 		pdf.setFont(undefined, 'bold').text(`COURSE RECOMMENDED`, startX, spaceRecommendCourse);
 
-        let additionalTblRow = 0
+        let additionalTblRow = 0, add = 0
         let coursesRecommended = courseRecommendArranged(result?.result_courses).map((d, i) => {
             if(d.course.length > 66){
-                additionalTblRow += Math.round(d.course.length/66)*3
+                additionalTblRow += Math.round(d.course.length/66)
             }
             return [d.rank, d.course.substring(0, d.course.length - 2)]
         })
 
-        if(coursesRecommended){
+        if(coursesRecommended?.length){
             autoTable(pdf, {
                 theme: 'grid',
                 startY: spaceRecommendCourse+3,
@@ -200,8 +200,8 @@ export default function Result({ result, id }){
                     ['Rank', 'Courses'],
                     ...coursesRecommended
                 ],
-                headerStyles: { halign: 'center',},
-                bodyStyles: { halign: 'center', fontStyle: 'normal' },
+                headerStyles: { halign: 'left',},
+                bodyStyles: { halign: 'left', fontStyle: 'normal' },
                 columnStyles: { 1: { halign: 'left' } },
                 didParseCell(data) {
                     if (data.row.index === 0) {
@@ -211,12 +211,23 @@ export default function Result({ result, id }){
                 }
             })
         }else{
+            add += 10
             pdf.setFontSize(11);
-            pdf.setFont(undefined, 'normal').text('UNABLE TO GENERATE RECOMMENDED COURSE', startX, 80+spaceExam);
+            pdf.setFont(undefined, 'normal').text('UNABLE TO GENERATE RECOMMENDED COURSE', startX, spaceRecommendCourse+8);
+        }
+        if(coursesRecommended?.length <= 2){
+            add += 10
+        }else if (coursesRecommended?.length <= 3){
+            add += 5
+        }else if (coursesRecommended?.length <= 5){
+            add += 0
+        }else if (coursesRecommended?.length <= 7){
+            add -= 4
+        }else if (coursesRecommended?.length <= 10){
+            add -= 10
         }
 
-
-		let spaceRegression = spaceRecommendCourse + ((coursesRecommended?.length+1)*10) + additionalTblRow;
+		let spaceRegression = spaceRecommendCourse + ((coursesRecommended?.length+1)*10) + additionalTblRow + add;
 
 		pdf.setFontSize(13);
 		pdf.setFont(undefined, 'bold').text(`REGRESSION MODEL`, startX, spaceRegression);
