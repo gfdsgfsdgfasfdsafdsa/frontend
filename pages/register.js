@@ -156,7 +156,7 @@ const Register = () => {
                                 gutterBottom
                                 variant="body2"
                             >
-                                Use your email to create a new account
+                                Verification is removed due to security issues
                             </Typography>
                             <Alert condition={info.error} text={info.message} severity="error"/>
                             <Alert condition={info.success} text={info.message} severity="success"/>
